@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+  <script>
+    $(document).ready(function(){
+      $("#listButton").click(listFunc);
+      $("#registerButton").click(registerFunc);
+    });
+    function listFunc(){
+      $.ajax({
+        url: "/member/ajax-list",
+        dataType:"json",
+        type: "GET",
+        success: function (data) {
+          const buffer = ["<ol>"];
+          $.each(data.list, (index, member) => buffer.push(`<li>${member.id}</li>`));
+          buffer.push("</ol>");
+          $("#listContainer").html(buffer.join(""));
+        }
+      });
+    }
+
+    function registerFunc(){
+      $.ajax({
+        url: "/member",
+        data:$("form[name=registerForm]").serialize(),
+        type: "POST",
+        success:function(){
+          $("form[name=registerForm]")[0].reset();
+          listFunc();
+        }
+      });
+    }
+  </script>
+</head>
+<body>
+<a href="#" id="listButton">회원목록AJAX</a><br/>
+<div id="listContainer"></div>
+<br/>
+<h1>회원가입폼</h1>
+<form name="registerForm">
+  ID : <input type="text" name="id" /><br/>
+  PW : <input type="text" name="pw" /><br/>
+  ADDR : <input type="text" name="addr" /><br/>
+  TEL : <input type="text" name="tel" /><br/>
+  <input type="button" id="registerButton" value="가입" />
+</form>
+</body>
+</html>
